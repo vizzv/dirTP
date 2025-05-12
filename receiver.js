@@ -1,3 +1,4 @@
+const {packet,packetStore} = require('./utils/packet')
 const dgram = require('dgram');
 const server = dgram.createSocket('udp4');
 
@@ -11,12 +12,14 @@ server.bind(PORT, HOST, () => {
 });
 
 // Listen for incoming messages
-server.on('message', (msg, rinfo) => {
-  console.log(`Received message: ${msg} from ${rinfo.address}:${rinfo.port}`);
-});
 
-// Handle errors
-server.on('error', (err) => {
-  console.log(`Server error: ${err.message}`);
-  server.close();
+server.on('message', (msg, rinfo) => {
+  const data = JSON.parse(msg.toString());
+  console.log('Metadata received:', data);
+
+  // Send ACK back
+  const ack = Buffer.from(JSON.stringify(new packet("pk1",0,{for:data.packetId},0,3)));
+  server.send(ack, rinfo.port, rinfo.address, () => {
+    console.log('ACK sent to sender.');
+  });
 });

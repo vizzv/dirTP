@@ -1,10 +1,19 @@
+/***
+packet type :
+	0 : DATA_TRANSFER
+	1 : META
+	2 : ACK
+
+***/
 class packet 
 {
-	constructor(packetId, index, data)
+	constructor(packetId, index, data,version = 0,type)
 	{
 		this.packetId = packetId;
 		this.index = index;
 		this.data = data;
+		this.version = version;
+		this.type = type;
 	}
 }
 
