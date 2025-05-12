@@ -1,10 +1,11 @@
-/***
-packet type :
-	0 : DATA_TRANSFER
-	1 : META
-	2 : ACK
 
-***/
+const PACKET_TYPE = {
+	DATA_TRANSFER:0,
+	META:1,
+	DATA_TRANSFER_ACK:2,
+	DISCOVERY:3,
+	DISCOVERY_ACK:4
+}
 class packet 
 {
 	constructor(packetId, index, data,version = 0,type)
@@ -100,3 +101,4 @@ class packetStore
 
 module.exports.packet = packet ;
 module.exports.packetStore= packetStore ;
+module.exports.PACKET_TYPE = PACKET_TYPE;
