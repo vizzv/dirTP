@@ -30,6 +30,24 @@ const createClient = () => {
             addPeerId(rinfo);
           }
           break;
+	  case PACKET_TYPE.META:
+          if(packet.isInstruction) {
+	    
+          switch(packet.instructionType) {
+		case("SEND_FILE"):
+			const data = {fileName:packet.data.fileName,senderId:packet.data.senderId};
+			console.log("rcv meta file sending packet",data);
+			//TODO : support for storing this info and send METS acknoledge.
+		  break;
+		deafault:
+		  console.log("Invalid 	Instuction Type in meta packet");
+		  break;
+		}
+		  
+	    }
+
+
+          break;
         default:
           console.log(`${packet.type} is not implemented`)
           console.log('Received fraud packet:', packet);
@@ -98,14 +116,20 @@ const createClient = () => {
     }
   }
 
-  function sendFile(filePath) {
+  function sendFile(filePath,peerIp) {
     const fs = require('fs');
     const fileSize = fs.statSync(filePath).size;
     const fileStream = fs.createReadStream(filePath);
 
     const fileName = filePath.split('/').pop();
-
+    const data = {fileName:fileName,senderId:SESSION_ID};
+    const metaPacket = new packet(generateId(), 0, data, 1, PACKET_TYPE.META);
+    metaPacket.isInstruction = true;
+    metaPacket.instructionType = "SEND_FILE"
+    const msg = Buffer.from(JSON.stringify(metaPacket));
     console.log('Sending file:', fileName);
+    const [receiverIp,receiverPort] = peerIp.split(":");
+    socket.send(msg,0,msg.length,receiverPort,receiverIp);
   }
 
 }
